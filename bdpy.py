@@ -12,6 +12,20 @@ NOTE:
         use the front reject path.
     2. Rejecting input is now invariable, i.e. pressing the
         experimenter button will always reject paper
+        
+A very short summary of Raspberry Pi's GPIO control:
+    We are going to use the RPIO library for controlling GPIO input and output.
+    RPIO is useful because it has a built-in servo control support.
+    There is a MANDATORY setup procedure. You MUST first set the mode by invoking RPIO.setmode()
+    and decide which pin layout we are using. For simplicity's sake, we will be using RPIO.BOARD,
+    which is the physical layout. The following describes the aforementioned mandatory setup:
+        1. RPIO.setmode() to set the layout scheme
+        2. RPIO.setup() to set the pin, using enums RPIO.IN and RPIO.OUT
+    And then the rest is similar to inputting and outputting with microcontrollers. RPIO.output() for output pin
+    outputs voltage through that pin, and RPIO.input() for input pin reads in a digital signal (True/False)
+
+NOTE on workaround for digital input signals:
+    The circuit has to be re-structured to take into account the non-analog input of the sensors.
 """
 
 # Channel definitions for pins
