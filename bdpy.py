@@ -27,6 +27,10 @@ A very short summary of Raspberry Pi's GPIO control:
 
 NOTE on workaround for digital input signals:
     The circuit has to be re-structured to take into account the non-analog input of the sensors.
+
+NOTE on servo:
+    The servo motor requires its own power source, lest the board will draw too much current.
+    A workaround is to attach an extra Arduino and use its 5v output to power the Raspberry Pi.
 """
 
 # Channel definitions for pins
