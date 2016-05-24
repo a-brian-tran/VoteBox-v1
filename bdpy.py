@@ -15,6 +15,7 @@ NOTE:
         
 A very short summary of Raspberry Pi's GPIO control:
     We are going to use the RPIO library for controlling GPIO input and output.
+    Using RPIO requires root, so run the python code as root.
     RPIO is useful because it has a built-in servo control support.
     There is a MANDATORY setup procedure. You MUST first set the mode by invoking RPIO.setmode()
     and decide which pin layout we are using. For simplicity's sake, we will be using RPIO.BOARD,
@@ -73,16 +74,37 @@ def divert_servo():
     Routine for servo to move the wings, so that the paper gets diverted
     """
     print "Angling the servo..."
+    
 
 def front_reject():
     """
     Reject routine that diverts the paper path so that the ballot
     comes out front in accordance with the STAR-Vote specifications.
     """
-
     # Move the servo
+    divert_servo()
+    time.sleep(0.015)
 
     # Rotate the motor
+    t0 = int(round(time.time() * 1000))
+    t = t0
+    while (t - t0 < fullFeed):
+        # read digital input from either of the sensors
+        t = int(round(time.time() * 1000))
+        opt1 = RPIO.input(OptInt1)
+        opt2 = RPIO.input(OptInt2)
+        if (opt1 or opt2):
+            # if paper is still on the way, keep running the loop
+            t0 = int(round(time.time() * 1000))
+        
+        RPIO.output(MotorOut, True)
+    
+    # fully fed -> stop the motor
+    RPIO.output(MotorOut, False)
+    time.sleep(1.5) # sleep to ignore spurious input
+    
+    # straighten servo before jumping into main loop again
+    straighten_servo()
     
 def accept_ballot():
     """
@@ -120,11 +142,11 @@ def input_loop():
 
     # read in the values
     while (True):
-        opt1_val = RPIO.input(OptInt1)
-        opt2_val = RPIO.input(OptInt2)
-        exp_val = RPIO.input(ExpButton)
-        if (opt1_val or opt2_val):
-            if (ExpButton):
+        opt1 = RPIO.input(OptInt1)
+        opt2 = RPIO.input(OptInt2)
+        exp = RPIO.input(ExpButton)
+        if (opt1 or opt2):
+            if (exp):
                 front_reject()
             else:
                 accept_ballot()
