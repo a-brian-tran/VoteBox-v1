@@ -39,8 +39,8 @@ Servo = 11
 # constants
 optThreshold = 150
 servo = PWM.Servo()
-positionStraight = 132
-positionDivert = 109
+positionStraight = 1750
+positionDivert = 1250
 fullFeed = 1500
 frontRejectFeed = 2500
 
@@ -61,19 +61,21 @@ def setup():
     RPIO.setup(Motor, RPIO.OUT)
 
     print "Calibrating the servo..."
-    servo.set_servo(17, 1200)
+    straighten_servo()
 
 def straighten_servo():
     """
     Routine for servo to straighten, so that the paper can go through
     """
     print "Straightening the servo..."
+    servo.set_servo(Servo, positionStraight)
     
 def divert_servo():
     """
     Routine for servo to move the wings, so that the paper gets diverted
     """
     print "Angling the servo..."
+    servo.set_servo(Servo, positionDivert)
     
 
 def front_reject():
