@@ -29,14 +29,13 @@ NOTE on workaround for digital input signals:
 """
 
 # Channel definitions for pins
-
-# TODO
-ExpButton = 8
 OptInt1 = 5
 OptInt2 = 7
+ExpButton = 8
 MotorOut = 3
 Servo = 11
 
+# constants
 optThreshold = 150
 servo = PWM.Servo()
 positionStraight = 132
@@ -63,6 +62,17 @@ def setup():
     print "Calibrating the servo..."
     servo.set_servo(17, 1200)
 
+def straighten_servo():
+    """
+    Routine for servo to straighten, so that the paper can go through
+    """
+    print "Straightening the servo..."
+    
+def divert_servo():
+    """
+    Routine for servo to move the wings, so that the paper gets diverted
+    """
+    print "Angling the servo..."
 
 def front_reject():
     """
@@ -73,7 +83,35 @@ def front_reject():
     # Move the servo
 
     # Rotate the motor
-
+    
+def accept_ballot():
+    """
+    Accept routine that runs the motor until the paper is completely put into the box
+    """
+    
+    # move servo
+    straighten_servo()
+    time.sleep(0.015)
+    
+    # run motor for fullFeed seconds
+    t0 = int(round(time.time() * 1000))
+    t = t0
+    while (t - t0 < fullFeed):
+        # read digital input from either of the sensors
+        t = int(round(time.time() * 1000))
+        opt1 = RPIO.input(OptInt1)
+        opt2 = RPIO.input(OptInt2)
+        if (opt1 or opt2):
+            # if paper is still on the way, keep running the loop
+            t0 = int(round(time.time() * 1000))
+        
+        RPIO.output(MotorOut, True)
+    
+    # fully fed -> stop the motor
+    RPIO.output(MotorOut, False)
+    time.sleep(2) # sleep to ignore spurious input
+    
+        
 def input_loop():
     """
     The main loop for checking the optical interrupters and
