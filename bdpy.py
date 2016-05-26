@@ -2,7 +2,7 @@ import RPIO
 from RPIO import PWM
 
 """
-Raspberry Pi Port of BallotDiverter V2.
+Raspberry Pi Port of BallotDiverter V1.
 Original code designed by Grant Belton,
 Ported to Python by Nam Hee Kim and Brian Tran
 
